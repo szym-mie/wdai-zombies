@@ -77,7 +77,7 @@ class Zombie extends Entity {
   }
 
   static pointsDefault = 10
-  static bboxDefault = new BoundingBox(160, 310)
+  static bboxDefault = new BoundingBox(180, 310)
   static walkStepTime = 10
 }
 

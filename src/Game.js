@@ -57,13 +57,13 @@ class Game {
   }
 
   spawnZombie () {
-    const ratio = Math.random()
-    const height = 0.8 - ratio * 0.35
+    const level = Game.stepFromUnitRange(Math.random(), 16)
+    const height = 0.8 - level * 0.35
 
     const viewportPosition = new Position(0.99, height)
     const position = this.renderer.fromViewportCoordToAbsolute(viewportPosition)
 
-    const depth = 0.55 + ratio * 0.15
+    const depth = 0.55 + level * 0.15
     const zombie = this.zombieFactory(position, depth)
     zombie.walkingSpeed = 100 + Math.random() * 100
     this.zombies.add(zombie)
@@ -105,10 +105,11 @@ class Game {
 
   shoot () {
     this.crosshair.startWobble()
-    this.getZombies()
+    const shotZombie = this.getZombies()
       .filter(zombie => zombie.isHit(this.crosshair.position))
       .sort(Game.depthOrder)
-      .forEach(zombie => this.killZombie(zombie))
+      .reverse()[0]
+    if (shotZombie !== undefined) this.killZombie(shotZombie)
   }
 
   endGame () {
@@ -169,6 +170,10 @@ class Game {
   setCrosshairTargetPosition (ev) {
     const screenPosition = new Position(ev.offsetX, ev.offsetY)
     this.crosshair.targetPosition = this.renderer.fromScreenToAbsolute(screenPosition)
+  }
+
+  static stepFromUnitRange (n, steps) {
+    return Math.floor(n * steps) / steps
   }
 
   static depthOrder = (depthA, depthB) => depthB - depthA
