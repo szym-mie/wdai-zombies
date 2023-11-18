@@ -104,12 +104,12 @@ class Game {
   }
 
   shoot () {
-    this.crosshair.startWobble()
     const shotZombie = this.getZombies()
       .filter(zombie => zombie.isHit(this.crosshair.position))
       .sort(Game.depthOrder)
       .reverse()[0]
     if (shotZombie !== undefined) this.killZombie(shotZombie)
+    this.crosshair.startWobble()
   }
 
   endGame () {
