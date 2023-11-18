@@ -16,8 +16,8 @@ class Crosshair extends Entity {
     this.targetPosition = new Position(0, 0)
     this.moveRotationStrength = 0.01
     this.moveRotationScale = 0.16
-    this.wobbleTargetScale = 500
-    this.wobbleTargetDuration = 1500
+    this.wobbleTargetScale = 490
+    this.wobbleTargetDuration = 1300
     this.wobbleTime = this.wobbleTargetDuration
     this.wobblePatternCyclesPosition = 3
     this.wobblePatternCyclesRotation = 6

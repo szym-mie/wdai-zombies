@@ -11,4 +11,5 @@ body {
 
 canvas {
     width: 100%;
+    cursor: none;
 }
