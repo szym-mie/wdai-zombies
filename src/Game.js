@@ -94,7 +94,7 @@ class Game {
   }
 
   killZombie (zombie) {
-    this.despawnZombie(zombie)
+    zombie.die()
     this.score += zombie.points
   }
 
@@ -148,7 +148,7 @@ class Game {
 
     this.getZombies()
       .filter(zombie => this.isEntityOutOfBounds(zombie))
-      .forEach(zombie => this.zombieGotPast(zombie))
+      .forEach(zombie => !zombie.isDead ? this.zombieGotPast(zombie) : this.despawnZombie(zombie))
   }
 
   redraw () {
