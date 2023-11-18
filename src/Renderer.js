@@ -91,6 +91,24 @@ class Renderer {
   }
 
   /**
+   * Draw a centered text with transformation.
+   * @param {string} text text to draw
+   * @param {string} color font color
+   * @param {string} fontName font name
+   * @param {number} fontSize font size
+   * @param {RenderTransformation} transformation transformation
+   */
+  drawText (text, color, fontName, fontSize, transformation) {
+    transformation.apply()
+    this.canvasCtx.fillStyle = color
+    this.canvasCtx.textAlign = 'center'
+    this.canvasCtx.textBaseline = 'middle'
+    this.canvasCtx.font = fontSize + 'px ' + fontName
+    this.canvasCtx.fillText(text, 0, 0)
+    this.canvasCtx.resetTransform()
+  }
+
+  /**
    * Register resize event listener.
    */
   registerEvents () {

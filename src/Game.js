@@ -26,7 +26,7 @@ class Game {
     this.renderer.updateCanvasSize()
     this.totalTime = 0
 
-    this.playerStatus = new PlayerStatus(this, spriteManager.get('heart'), 'Pixelify Sans')
+    this.playerStatus = new PlayerStatus(this, spriteManager.get('heart'), 'Pixelify Sans', 60)
 
     this.backdrop = new Backdrop(spriteManager.get('backdrop'))
 
@@ -47,7 +47,7 @@ class Game {
     this.zombieDrawList = new KeyOrderedMap(Game.depthOrder)
     this.nextZombieId = 0
 
-    this.score = 0
+    this.score = 10
     this.lives = 3
 
     this.isPaused = false
@@ -110,12 +110,15 @@ class Game {
   }
 
   shoot () {
+    if (this.score === 0 || this.isPaused) return
     const shotZombie = this.getZombies()
       .filter(zombie => zombie.isHit(this.crosshair.position))
       .sort(Game.depthOrder)
       .reverse()[0]
     if (shotZombie !== undefined) this.killZombie(shotZombie)
     this.crosshair.startWobble()
+    this.playerStatus.shotFired()
+    this.score--
   }
 
   endGame () {
