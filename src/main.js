@@ -9,12 +9,8 @@ const main = async () => {
     new Sprite('res/sprite/backdrop.png', [Sprite.fullFrameDef()])
   )
   spriteManager.add(
-    'full_heart',
-    new Sprite('res/sprite/full_heart.png', [Sprite.fullFrameDef()])
-  )
-  spriteManager.add(
-    'empty_heart',
-    new Sprite('res/sprite/empty_heart.png', [Sprite.fullFrameDef()])
+    'heart',
+    new Sprite('res/sprite/heart.png', Sprite.rowFrameDefs(0, 0, 90, 90, 2))
   )
   spriteManager.add(
     'zombie',

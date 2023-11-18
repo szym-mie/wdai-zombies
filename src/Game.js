@@ -4,6 +4,7 @@ import Renderer from './Renderer.js'
 
 import Backdrop from './entity/Backdrop.js'
 import Crosshair from './entity/Crosshair.js'
+import PlayerStatus from './entity/PlayerStatus.js'
 import Zombie from './entity/Zombie.js'
 
 /**
@@ -24,6 +25,8 @@ class Game {
     this.renderer.registerEvents()
     this.renderer.updateCanvasSize()
     this.totalTime = 0
+
+    this.playerStatus = new PlayerStatus(this, spriteManager.get('heart'), 'Pixelify Sans')
 
     this.backdrop = new Backdrop(spriteManager.get('backdrop'))
 
@@ -46,6 +49,8 @@ class Game {
 
     this.score = 0
     this.lives = 3
+
+    this.isPaused = false
   }
 
   /**
@@ -95,6 +100,7 @@ class Game {
 
   zombieGotPast (zombie) {
     this.despawnZombie(zombie)
+    this.playerStatus.lostHeart()
     if (--this.lives === 0) this.endGame()
   }
 
@@ -113,7 +119,7 @@ class Game {
   }
 
   endGame () {
-    // TODO
+    this.isPaused = true
   }
 
   /**
@@ -126,6 +132,9 @@ class Game {
   }
 
   update (deltaTime) {
+    this.playerStatus.update(deltaTime)
+    if (this.isPaused) return
+
     this.getZombies().forEach(zombie => zombie.update(deltaTime))
     this.crosshair.update(deltaTime)
 
@@ -136,7 +145,7 @@ class Game {
 
     this.getZombies()
       .filter(zombie => this.isEntityOutOfBounds(zombie))
-      .forEach(zombie => this.despawnZombie(zombie))
+      .forEach(zombie => this.zombieGotPast(zombie))
   }
 
   redraw () {
@@ -145,6 +154,7 @@ class Game {
       for (const zombie of zombieDepthList) zombie.render(this.renderer)
     }
     this.crosshair.render(this.renderer)
+    this.playerStatus.render(this.renderer)
   }
 
   loop (time = 0) {
