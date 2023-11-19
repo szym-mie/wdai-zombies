@@ -1,4 +1,3 @@
-import Entity from './Entity.js'
 import KeyOrderedMap from './KeyOrderedMap.js'
 import Position from './Position.js'
 import Renderer from './Renderer.js'

@@ -138,8 +138,10 @@ class PlayerStatus extends Entity {
         .positionOf(layerPosition)
         .rotationOf(rotation)
       const color = PlayerStatus.screenCardLayerColors[i - layerCount]
-      if (i >= layerCount) renderer.drawText(text, color, this.fontName, this.fontSize, transform)
-      layerPosition.add(offset)
+      if (i >= layerCount) {
+        renderer.drawText(text, color, this.fontName, this.fontSize, transform)
+        layerPosition.add(offset)
+      }
     }
   }
 
