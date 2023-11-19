@@ -52,7 +52,7 @@ class Game {
     this.zombieDrawList = new KeyOrderedMap(Game.depthOrder)
     this.nextZombieId = 0
 
-    this.score = 10
+    this.score = 30
     this.lives = 3
 
     this.isPaused = false
@@ -248,7 +248,7 @@ class Game {
 
   static aspectRatio = 16 / 9
 
-  static pointsDecrementWhenShoot = 1
+  static scoreDecrementWhenShoot = 3
   static minTimeBetweenSpawnsDefault = 500
   static minTimeBetweenScreenAction = 1500
 }
