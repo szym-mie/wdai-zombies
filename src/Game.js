@@ -1,3 +1,4 @@
+import Entity from './Entity.js'
 import KeyOrderedMap from './KeyOrderedMap.js'
 import Position from './Position.js'
 import Renderer from './Renderer.js'
@@ -140,7 +141,9 @@ class Game {
 
   onMouseClick () {
     if (this.isPaused || this.isDead) {
-      this.unpause()
+      if (this.playerStatus.screenCardAnimationTime > Game.minTimeBetweenScreenAction) {
+        this.unpause()
+      }
     } else {
       this.fireShot()
     }
@@ -248,6 +251,7 @@ class Game {
 
   static pointsDecrementWhenShoot = 1
   static minTimeBetweenSpawnsDefault = 500
+  static minTimeBetweenScreenAction = 1500
 }
 
 export default Game
