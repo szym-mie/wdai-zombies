@@ -11,18 +11,23 @@ class Crosshair extends Entity {
     super(position)
     this.rotation = 0
     this.scale = 0.1
-    this.targetScale = 0.1
     this.sprite = sprite
-    this.targetPosition = new Position(0, 0)
+
+    this.targetPosition = new Position()
+    this.targetScale = 0.1
+
     this.moveRotationStrength = 0.01
     this.moveRotationScale = 0.16
+
     this.wobbleTargetScale = 490
     this.wobbleTargetDuration = 1300
     this.wobbleTime = this.wobbleTargetDuration
+
     this.wobblePatternCyclesPosition = 3
     this.wobblePatternCyclesRotation = 6
     this.wobblePatternCyclesScale = 3
     this.wobblePatternScale = 0.08
+
     this.wobbleFollowStrength = 10
   }
 
@@ -69,8 +74,8 @@ class Crosshair extends Entity {
   update (deltaTime) {
     super.update(deltaTime)
     this.wobbleTime += deltaTime
-    const timeUnitRatio = deltaTime / 1000
-    const lerpRatio = Math.min(this.wobbleFollowStrength * timeUnitRatio, 0.99)
+    const unitTimeDelta = Entity.getUnitTime(deltaTime)
+    const lerpRatio = Math.min(this.wobbleFollowStrength * unitTimeDelta, 0.99)
 
     this.position.lerp(this.getWobblePatternPosition().add(this.targetPosition), lerpRatio)
     this.rotation = this.getMovePatternRotation() + this.getWobblePatternRotation()

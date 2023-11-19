@@ -129,6 +129,14 @@ class Position {
     return Math.sqrt(this.x * this.x + this.y * this.y)
   }
 
+  /**
+   * Clone this position.
+   * @returns {Position} new position
+   */
+  copy () {
+    return new Position().setFrom(this)
+  }
+
   static zero = new Position()
 }
 

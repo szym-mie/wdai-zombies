@@ -18,7 +18,7 @@ class BoundingBox {
   setOffset (width, height) {
     this.width = width
     this.height = height
-    this.halfOffset = new Position(this.width / 2, this.height / 2)
+    this.halfOffset = new Position(this.width, this.height).scale(0.5)
   }
 
   /**
@@ -48,7 +48,7 @@ class BoundingBox {
    * @returns {boolean} true if inside
    */
   isPointInsideWithScale (entity, scale, point) {
-    const scaledHalfOffset = new Position().setFrom(this.halfOffset).scale(scale)
+    const scaledHalfOffset = this.halfOffset.copy().scale(scale)
     return BoundingBox.testPointInOffsetArea(entity.position, scaledHalfOffset, point)
   }
 
@@ -60,8 +60,8 @@ class BoundingBox {
    * @returns {boolean} true if point inside
    */
   static testPointInOffsetArea (center, halfOffset, point) {
-    const upperCorner = new Position().setFrom(center).add(halfOffset)
-    const lowerCorner = new Position().setFrom(center).diff(halfOffset)
+    const upperCorner = center.copy().add(halfOffset)
+    const lowerCorner = center.copy().diff(halfOffset)
 
     return (
       upperCorner.x > point.x && lowerCorner.x < point.x &&

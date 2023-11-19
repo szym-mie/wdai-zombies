@@ -18,11 +18,11 @@ class Zombie extends Entity {
     this.bbox = Zombie.bboxDefault
 
     this.walkAnimationTime = 0
-    this.walkingFrame = 0
     this.isWalking = true
     this.deathAnimationTime = 0
     this.isDead = false
 
+    this.walkingFrame = 0
     this.walkingSpeed = 100
     this.walkingRandomScale = 0.3
     this.walkingRandomPeriod = 2.3
@@ -36,27 +36,39 @@ class Zombie extends Entity {
 
   update (deltaTime) {
     super.update(deltaTime)
-    const timeUnitRatio = deltaTime / 1000
     if (!this.isDead) {
-      const walkingSpeed = this.getWalkingSpeed() * timeUnitRatio
-      this.walkAnimationTime += walkingSpeed
-      this.walkingFrame = Math.floor(this.walkAnimationTime / Zombie.walkStepTime)
-
-      this.position.x += -walkingSpeed * this.scale
-      this.rotation = this.getWalkingWobbleRotation()
+      this.updateWalking(deltaTime)
     } else {
-      this.deathAnimationTime += deltaTime
-      this.walkingFrame = 0
-
-      const frameVelocity = new Position().setFrom(this.flyVelocity).scale(timeUnitRatio)
-      const gravityAcceleration = new Position(0, Zombie.flyGravity).scale(timeUnitRatio)
-
-      this.flyDepth += Zombie.flyDepthSpeed * timeUnitRatio
-      this.flyVelocity.add(gravityAcceleration)
-      this.position.add(frameVelocity.scale(this.scale))
-      this.rotation += Zombie.flyRotation * timeUnitRatio
-      this.scale = this.depth / this.flyDepth
+      this.updateFlying(deltaTime)
     }
+  }
+
+  updateWalking (deltaTime) {
+    const unitTimeDelta = Entity.getUnitTime(deltaTime)
+    const walkingSpeed = this.getWalkingSpeed() * unitTimeDelta
+
+    this.walkAnimationTime += walkingSpeed
+    this.walkingFrame = Math.floor(this.walkAnimationTime / Zombie.walkStepTime)
+
+    this.position.x += -walkingSpeed * this.scale
+    this.rotation = this.getWalkingWobbleRotation()
+  }
+
+  updateFlying (deltaTime) {
+    const unitTimeDelta = Entity.getUnitTime(deltaTime)
+
+    this.deathAnimationTime += deltaTime
+    this.walkingFrame = 0
+
+    const frameVelocity = this.flyVelocity.copy().scale(unitTimeDelta)
+    const gravityAcceleration = new Position(0, Zombie.flyGravity).scale(unitTimeDelta)
+
+    this.flyDepth += Zombie.flyDepthSpeed * unitTimeDelta
+    this.flyVelocity.add(gravityAcceleration)
+
+    this.position.add(frameVelocity.scale(this.scale))
+    this.rotation += Zombie.flyRotation * unitTimeDelta
+    this.scale = this.depth / this.flyDepth
   }
 
   render (renderer) {
@@ -95,7 +107,9 @@ class Zombie extends Entity {
   die () {
     this.isDead = true
     this.deathAnimationTime = 0
-    this.flyVelocity = new Position().setFromAngle(Math.random() * 2 - 1).scale(-Zombie.flySpeed)
+    this.flyVelocity = new Position()
+      .setFromAngle(Math.random() * 2 - 1)
+      .scale(-Zombie.flySpeed)
   }
 
   static pointsDefault = 10

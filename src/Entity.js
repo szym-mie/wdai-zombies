@@ -39,6 +39,12 @@ class Entity extends Updateable {
   render (renderer) {
     throw new TypeError('Entity class ' + this.constructor.name + ' does not override render method.')
   }
+
+  static getUnitTime (deltaTime) {
+    return deltaTime * Entity.unitTimeScale
+  }
+
+  static unitTimeScale = 0.001
 }
 
 export default Entity
