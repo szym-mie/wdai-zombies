@@ -131,7 +131,7 @@ class Game {
   }
 
   shoot () {
-    if (this.score === 0 || this.isPaused) return
+    if (this.score === 0 || this.isPaused || this.isDead) return
     const shotZombie = this.getZombies()
       .filter(zombie => zombie.isHit(this.crosshair.position))
       .sort(Game.depthOrder)
