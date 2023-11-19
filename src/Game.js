@@ -6,6 +6,7 @@ import Backdrop from './entity/Backdrop.js'
 import Crosshair from './entity/Crosshair.js'
 import PlayerStatus from './entity/PlayerStatus.js'
 import Zombie from './entity/Zombie.js'
+import SparkParticleSpace from './particle/SparkParticleSpace.js'
 
 /**
  * @typedef {import('./sprite/SpriteManager.js').default} SpriteManager
@@ -34,6 +35,8 @@ class Game {
 
     this.zombieFactory = (position, depth) => new Zombie(position, spriteManager.get('zombie'), depth)
 
+    this.particleSpaces = new Set()
+
     this.registerEvents()
 
     this.zombieSpawnsDepths = [0.55, 0.6, 0.65, 0.7]
@@ -51,6 +54,7 @@ class Game {
     this.lives = 3
 
     this.isPaused = false
+    this.isDead = false
   }
 
   /**
@@ -98,6 +102,23 @@ class Game {
     this.score += zombie.points
   }
 
+  getParticleSpaces () {
+    return [...this.particleSpaces.values()]
+  }
+
+  removeParticleSpace (particleSpace) {
+    console.log(particleSpace)
+    particleSpace.removeParticles()
+    this.particleSpaces.delete(particleSpace)
+    console.log(this.particleSpaces)
+  }
+
+  createSparks (position) {
+    const sparks = new SparkParticleSpace(position, 1)
+    sparks.spawnParticles()
+    this.particleSpaces.add(sparks)
+  }
+
   zombieGotPast (zombie) {
     this.despawnZombie(zombie)
     this.playerStatus.lostHeart()
@@ -115,14 +136,17 @@ class Game {
       .filter(zombie => zombie.isHit(this.crosshair.position))
       .sort(Game.depthOrder)
       .reverse()[0]
-    if (shotZombie !== undefined) this.killZombie(shotZombie)
+    if (shotZombie !== undefined) {
+      this.killZombie(shotZombie)
+    }
+    this.createSparks(this.crosshair.position)
     this.crosshair.startWobble()
     this.playerStatus.shotFired()
     this.score--
   }
 
   endGame () {
-    this.isPaused = true
+    this.isDead = true
   }
 
   /**
@@ -139,7 +163,8 @@ class Game {
     if (this.isPaused) return
 
     this.getZombies().forEach(zombie => zombie.update(deltaTime))
-    this.crosshair.update(deltaTime)
+    this.getParticleSpaces().forEach(particleSpace => particleSpace.update(deltaTime))
+    if (!this.isDead) this.crosshair.update(deltaTime)
 
     if (this.totalTime > this.nextSpawnTime) {
       this.nextSpawnTime = this.totalTime + (this.spawnPeriod * (0.8 + Math.random() * 0.7))
@@ -149,12 +174,19 @@ class Game {
     this.getZombies()
       .filter(zombie => this.isEntityOutOfBounds(zombie))
       .forEach(zombie => !zombie.isDead ? this.zombieGotPast(zombie) : this.despawnZombie(zombie))
+
+    this.getParticleSpaces()
+      .filter(particleSpace => particleSpace.isEmpty())
+      .forEach(particleSpace => this.removeParticleSpace(particleSpace))
   }
 
   redraw () {
     this.backdrop.render(this.renderer)
     for (const zombieDepthList of this.zombieDrawList.values()) {
       for (const zombie of zombieDepthList) zombie.render(this.renderer)
+    }
+    for (const particleSpace of this.particleSpaces) {
+      particleSpace.render(this.renderer)
     }
     this.crosshair.render(this.renderer)
     this.playerStatus.render(this.renderer)

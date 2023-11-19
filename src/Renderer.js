@@ -109,6 +109,73 @@ class Renderer {
   }
 
   /**
+   * Draw line with selected style.
+   * @param {Position} lineStart line start
+   * @param {Position} lineEnd line end
+   * @param {RenderTransformation} transformation transformation
+   */
+  drawLine (lineStart, lineEnd, transformation) {
+    transformation.apply()
+    this.canvasCtx.beginPath()
+    this.canvasCtx.moveTo(lineStart.x, lineStart.y)
+    this.canvasCtx.lineTo(lineEnd.x, lineEnd.y)
+    this.canvasCtx.stroke()
+    this.canvasCtx.resetTransform()
+  }
+
+  /**
+   * Draw lines with selected style.
+   * @param {[Position, Position][]} lines lines
+   * @param {RenderTransformation} transformation transformation
+   */
+  drawLines (lines, transformation) {
+    transformation.apply()
+    this.canvasCtx.beginPath()
+    lines.forEach(([lineStart, lineEnd]) => {
+      this.canvasCtx.moveTo(lineStart.x, lineStart.y)
+      this.canvasCtx.lineTo(lineEnd.x, lineEnd.y)
+    })
+    this.canvasCtx.stroke()
+    this.canvasCtx.resetTransform()
+  }
+
+  /**
+   * Set composite operation for next draws.
+   * @param {string} compositeOperation composite operation
+   */
+  useComposite (compositeOperation = 'source-over') {
+    this.canvasCtx.globalCompositeOperation = compositeOperation
+  }
+
+  /**
+   * Set a line style to draw.
+   * @param {string} lineColor line color, can be a gradient
+   * @param {number} lineWidth line width
+   */
+  setLineStyle (lineColor, lineWidth) {
+    this.canvasCtx.strokeStyle = lineColor
+    this.canvasCtx.lineWidth = lineWidth
+  }
+
+  /**
+   * Get a radial gradient.
+   * @param {Position} center center of pattern
+   * @param {number} radius radius of pattern
+   * @param {string} startColor inner color
+   * @param {string} endColor outer color
+   * @returns {CanvasGradient} gradient
+   */
+  getRadialGradient (center, radius, startColor, endColor) {
+    const gradient = this.canvasCtx.createRadialGradient(
+      center.x, center.y, 0,
+      center.x, center.y, radius
+    )
+    gradient.addColorStop(0, startColor)
+    gradient.addColorStop(1, endColor)
+    return gradient
+  }
+
+  /**
    * Register resize event listener.
    */
   registerEvents () {
