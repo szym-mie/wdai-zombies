@@ -20,6 +20,7 @@ class Game {
    */
   constructor (spriteManager, canvasElement) {
     this.resetGameState()
+    this.isPaused = true
 
     this.spriteManager = spriteManager
     this.renderer = new Renderer(canvasElement, Game.aspectRatio)
@@ -58,10 +59,16 @@ class Game {
     this.isDead = false
   }
 
-  /**
-   * Get all zombies.
-   * @returns {Zombie[]} all zombies
-   */
+  unpause () {
+    if (this.isDead) {
+      this.resetGameState()
+    } else {
+      this.isPaused = false
+    }
+    this.playerStatus.gameStart()
+    this.playerStatus.shakeHeart()
+  }
+
   getZombies () {
     return [...this.zombies.values()]
   }
@@ -122,7 +129,7 @@ class Game {
 
   zombieGotPast (zombie) {
     this.despawnZombie(zombie)
-    this.playerStatus.lostHeart()
+    this.playerStatus.shakeHeart()
     if (--this.lives === 0) this.endGame()
   }
 
@@ -131,7 +138,15 @@ class Game {
     this.removeZombieFromDrawList(zombie)
   }
 
-  shoot () {
+  onMouseClick () {
+    if (this.isPaused || this.isDead) {
+      this.unpause()
+    } else {
+      this.fireShot()
+    }
+  }
+
+  fireShot () {
     if (this.score === 0 || this.isPaused || this.isDead) return
     const shotZombie = this.getZombies()
       .filter(zombie => zombie.isHit(this.crosshair.position))
@@ -148,6 +163,7 @@ class Game {
 
   endGame () {
     this.isDead = true
+    this.playerStatus.gameEnd()
   }
 
   /**
@@ -183,12 +199,15 @@ class Game {
 
   redraw () {
     this.background.render(this.renderer)
+
     for (const zombieDepthList of this.zombieDrawList.values()) {
       for (const zombie of zombieDepthList) zombie.render(this.renderer)
     }
+
     for (const particleSpace of this.particleSpaces) {
       particleSpace.render(this.renderer)
     }
+
     this.crosshair.render(this.renderer)
     this.curtains.render(this.renderer)
     this.playerStatus.render(this.renderer)
@@ -208,7 +227,7 @@ class Game {
    */
   registerEvents () {
     const onMouseMove = ev => this.setCrosshairTargetPosition(ev)
-    const onMouseDown = _ev => this.shoot()
+    const onMouseDown = _ev => this.onMouseClick()
 
     this.renderer.canvasElement.addEventListener('mousemove', onMouseMove, false)
     this.renderer.canvasElement.addEventListener('mousedown', onMouseDown, false)
