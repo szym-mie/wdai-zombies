@@ -29,7 +29,8 @@ class Game {
 
     this.playerStatus = new PlayerStatus(this, spriteManager.get('heart'), 'Pixelify Sans', 60)
 
-    this.backdrop = new Backdrop(spriteManager.get('backdrop'))
+    this.background = new Backdrop(spriteManager.get('background'))
+    this.curtains = new Backdrop(spriteManager.get('curtains'))
 
     this.crosshair = new Crosshair(Position.zero, spriteManager.get('crosshair'))
 
@@ -181,7 +182,7 @@ class Game {
   }
 
   redraw () {
-    this.backdrop.render(this.renderer)
+    this.background.render(this.renderer)
     for (const zombieDepthList of this.zombieDrawList.values()) {
       for (const zombie of zombieDepthList) zombie.render(this.renderer)
     }
@@ -189,6 +190,7 @@ class Game {
       particleSpace.render(this.renderer)
     }
     this.crosshair.render(this.renderer)
+    this.curtains.render(this.renderer)
     this.playerStatus.render(this.renderer)
   }
 

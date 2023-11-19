@@ -5,8 +5,12 @@ import SpriteManager from './sprite/SpriteManager.js'
 const main = async () => {
   const spriteManager = new SpriteManager()
   spriteManager.add(
-    'backdrop',
-    new Sprite('res/sprite/backdrop.png', [Sprite.fullFrameDef()])
+    'background',
+    new Sprite('res/sprite/background.png', [Sprite.fullFrameDef()])
+  )
+  spriteManager.add(
+    'curtains',
+    new Sprite('res/sprite/curtains.png', [Sprite.fullFrameDef()])
   )
   spriteManager.add(
     'heart',
