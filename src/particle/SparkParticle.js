@@ -9,7 +9,8 @@ class SparkParticle extends Particle {
 
   static getStartVelocity () {
     const angle = Math.random() * 2 * Math.PI
-    return new Position().setFromAngle(angle).scale(SparkParticle.startSpeed)
+    const speed = SparkParticle.startSpeed + Math.random() * SparkParticle.speedVariation
+    return new Position().setFromAngle(angle).scale(speed)
   }
 
   update (deltaTime) {
@@ -26,7 +27,8 @@ class SparkParticle extends Particle {
     return false
   }
 
-  static startSpeed = 800
+  static speedVariation = 800
+  static startSpeed = 300
 }
 
 export default SparkParticle
