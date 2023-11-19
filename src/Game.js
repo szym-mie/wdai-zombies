@@ -160,7 +160,7 @@ class Game {
     this.createSparks(this.crosshair.position)
     this.crosshair.startWobble()
     this.playerStatus.shotFired()
-    this.score--
+    this.score -= Game.scoreDecrementWhenShoot
   }
 
   endGame () {
